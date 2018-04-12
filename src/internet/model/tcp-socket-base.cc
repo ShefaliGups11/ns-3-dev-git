@@ -1199,6 +1199,23 @@ TcpSocketBase::DoForwardUp (Ptr<Packet> packet, const Address &fromAddress,
   TcpHeader tcpHeader;
   uint32_t bytesRemoved = packet->RemoveHeader (tcpHeader);
   SequenceNumber32 seq = tcpHeader.GetSequenceNumber ();
+
+  if (m_state == ESTABLISHED && !(tcpHeader.GetFlags () & TcpHeader::RST))
+    {
+      // Check if the sender has responded to ECN echo by reducing the Congestion Window
+      if (tcpHeader.GetFlags () & TcpHeader::CWR )
+        {
+          // Check if a packet with CE bit set is received. If there is no CE bit set, then change the state to ECN_IDLE to
+          // stop sending ECN Echo messages. If there is CE bit set, the packet should continue sending ECN Echo messages
+          //
+          if (m_tcb->m_ecnState != TcpSocketState::ECN_CE_RCVD)
+            {
+              NS_LOG_DEBUG (TcpSocketState::EcnStateName[m_tcb->m_ecnState] << " -> ECN_IDLE");
+              m_tcb->m_ecnState = TcpSocketState::ECN_IDLE;
+            }
+        }
+    }
+
   if (bytesRemoved == 0 || bytesRemoved > 60)
     {
       NS_LOG_ERROR ("Bytes removed: " << bytesRemoved << " invalid");
@@ -1215,18 +1232,6 @@ TcpSocketBase::DoForwardUp (Ptr<Packet> packet, const Address &fromAddress,
       // Acknowledgement should be sent for all unacceptable packets (RFC793, p.69)
       if (m_state == ESTABLISHED && !(tcpHeader.GetFlags () & TcpHeader::RST))
         {
-          // Check if the sender has responded to ECN echo by reducing the Congestion Window
-          if (tcpHeader.GetFlags () & TcpHeader::CWR )
-            {
-              // Check if a packet with CE bit set is received. If there is no CE bit set, then change the state to ECN_IDLE to
-              // stop sending ECN Echo messages. If there is CE bit set, the packet should continue sending ECN Echo messages
-              //
-              if (m_tcb->m_ecnState != TcpSocketState::ECN_CE_RCVD)
-                {
-                  NS_LOG_DEBUG (TcpSocketState::EcnStateName[m_tcb->m_ecnState] << " -> ECN_IDLE");
-                  m_tcb->m_ecnState = TcpSocketState::ECN_IDLE;
-                }
-            }
           if (m_tcb->m_ecnState == TcpSocketState::ECN_CE_RCVD || m_tcb->m_ecnState == TcpSocketState::ECN_ECE_SENT )
             {
               // Receiver sets ECE flags when it receives a packet with CE bit on or sender hasn’t responded to ECN echo sent by receiver

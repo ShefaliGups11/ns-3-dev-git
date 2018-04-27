@@ -1111,11 +1111,11 @@ TcpSocketBase::ForwardUp (Ptr<Packet> packet, Ipv4Header header, uint16_t port,
 
   TcpHeader tcpHeader;
   packet->PeekHeader (tcpHeader);
-  if (header.GetEcn() == Ipv4Header::ECN_CE && m_ecnCESeq < tcpHeader.GetAckNumber ())
+  if (header.GetEcn() == Ipv4Header::ECN_CE && m_ecnCESeq < tcpHeader.GetSequenceNumber ())
     {
       NS_LOG_INFO ("Received CE flag is valid");
       NS_LOG_DEBUG (TcpSocketState::EcnStateName[m_tcb->m_ecnState] << " -> ECN_CE_RCVD");
-      m_ecnCESeq = tcpHeader.GetAckNumber ();
+      m_ecnCESeq = tcpHeader.GetSequenceNumber ();
       m_tcb->m_ecnState = TcpSocketState::ECN_CE_RCVD;
       m_congestionControl->CwndEvent (m_tcb, TcpSocketState::CA_EVENT_ECN_IS_CE);
     }
@@ -1143,11 +1143,11 @@ TcpSocketBase::ForwardUp6 (Ptr<Packet> packet, Ipv6Header header, uint16_t port,
 
   TcpHeader tcpHeader;
   packet->PeekHeader (tcpHeader);
-  if (header.GetEcn() == Ipv6Header::ECN_CE && m_ecnCESeq < tcpHeader.GetAckNumber ())
+  if (header.GetEcn() == Ipv6Header::ECN_CE && m_ecnCESeq < tcpHeader.GetSequenceNumber ())
     {
       NS_LOG_INFO ("Received CE flag is valid");
       NS_LOG_DEBUG (TcpSocketState::EcnStateName[m_tcb->m_ecnState] << " -> ECN_CE_RCVD");
-      m_ecnCESeq = tcpHeader.GetAckNumber ();
+      m_ecnCESeq = tcpHeader.GetSequenceNumber ();
       m_tcb->m_ecnState = TcpSocketState::ECN_CE_RCVD;
       m_congestionControl->CwndEvent (m_tcb, TcpSocketState::CA_EVENT_ECN_IS_CE);
     }

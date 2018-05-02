@@ -2473,8 +2473,7 @@ TcpSocketBase::SendEmptyPacket (uint8_t flags)
       ++s;
     }
 
-  //Not really a retransmission, just to use AddSocketTags in a prior way
-  AddSocketTags (p, true);
+  AddSocketTags (p);
 
   header.SetFlags (flags);
   header.SetSequenceNumber (s);
@@ -2738,7 +2737,7 @@ TcpSocketBase::ConnectionSucceeded ()
 }
 
 void
-TcpSocketBase::AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const
+TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
 {
   /*
    * Add tags for each socket option.
@@ -2750,7 +2749,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const
     {
       SocketIpTosTag ipTosTag;
       NS_LOG_LOGIC (" ECT bits should not be set on retransmitted packets");
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0 && !isRetransmission)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0)
         {
           ipTosTag.SetTos (GetIpTos () | 0x2);
         }
@@ -2762,7 +2761,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const
     }
   else
     {
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && !isRetransmission)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
         {
           SocketIpTosTag ipTosTag;
           ipTosTag.SetTos (0x2);
@@ -2773,7 +2772,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const
   if (IsManualIpv6Tclass ())
     {
       SocketIpv6TclassTag ipTclassTag;
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0 && !isRetransmission)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0)
         {
            ipTclassTag.SetTclass (GetIpv6Tclass () | 0x2);
         }
@@ -2785,7 +2784,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const
     }
   else
     {
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && !isRetransmission)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
         {
           SocketIpv6TclassTag ipTclassTag;
           ipTclassTag.SetTclass (0x2);
@@ -2874,7 +2873,7 @@ TcpSocketBase::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize, bool with
         }
     }
 
-  AddSocketTags (p, isRetransmission);
+  AddSocketTags (p);
 
   if (m_closeOnEmpty && (remainingData == 0))
     {

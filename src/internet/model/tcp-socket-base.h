@@ -1062,9 +1062,8 @@ protected:
   /**
    * \brief Add Tags for the Socket
    * \param p Packet
-   * \param isRetransmission Retransmission
    */
-  void AddSocketTags (const Ptr<Packet> &p, bool isRetransmission) const;
+  void AddSocketTags (const Ptr<Packet> &p) const;
 
 protected:
   // Counters and events

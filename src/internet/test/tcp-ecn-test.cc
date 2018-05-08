@@ -174,7 +174,7 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
     }
 
   // Sender should reduce the Congestion Window as a response to receiver's ECN Echo notification only once per window
-  if (m_tcb->m_ecnState ==  TcpSocketState::ECN_ECE_RCVD && m_ecnEchoSeq.Get () > m_ecnCWRSeq.Get () && !isRetransmission )
+  if (m_tcb->m_ecnState ==  TcpSocketState::ECN_ECE_RCVD && m_ecnEchoSeq.Get () > m_ecnCWRSeq.Get () && !isRetransmission)
     {
       NS_LOG_INFO ("Backoff mechanism by reducing CWND  by half because we've received ECN Echo");
       m_tcb->m_ssThresh = m_congestionControl->GetSsThresh (m_tcb, BytesInFlight ());
@@ -201,19 +201,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
   if (GetIpTos ())
     {
       SocketIpTosTag ipTosTag;
-
-      NS_LOG_LOGIC (" ECT bits should not be set on retransmitted packets ");
-      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2) && !isRetransmission )
+      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
           ipTosTag.SetTos (GetIpTos () | 0x3);
         }
-      else if ( m_testcase == 6 &&  ( m_dataPacketSent == 10 || m_dataPacketSent == 11 )  && !isRetransmission )
+      else if ( m_testcase == 6 &&  ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
           ipTosTag.SetTos (GetIpTos () | 0x3);
         }
       else
         {
-          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0 && !isRetransmission)
+          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0)
             {
               ipTosTag.SetTos (GetIpTos () | 0x2);
             }
@@ -227,17 +225,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
   else
     {
       SocketIpTosTag ipTosTag;
-      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2)  && !isRetransmission)
+      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
           ipTosTag.SetTos (0x3);
         }
-      else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11 )  && !isRetransmission )
+      else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
           ipTosTag.SetTos (0x3);
         }
       else
         {
-          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && !isRetransmission)
+          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
             {
               ipTosTag.SetTos (0x2);
             }
@@ -248,17 +246,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
   if (IsManualIpv6Tclass ())
     {
       SocketIpv6TclassTag ipTclassTag;
-      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2)  && !isRetransmission )
+      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
           ipTclassTag.SetTclass (GetIpv6Tclass () | 0x3);
         }
-      else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11 )  && !isRetransmission)
+      else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
           ipTclassTag.SetTclass (GetIpv6Tclass () | 0x3);
         }
       else
         {
-          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0 && !isRetransmission)
+          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0)
             {
               ipTclassTag.SetTclass (GetIpv6Tclass () | 0x2);
             }
@@ -272,17 +270,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
   else
     {
       SocketIpv6TclassTag ipTclassTag;
-      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2)  && !isRetransmission)
+      if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
           ipTclassTag.SetTclass (0x3);
         }
-      else if ( m_testcase == 6 &&( m_dataPacketSent == 10 || m_dataPacketSent == 11 )  && !isRetransmission)
+      else if ( m_testcase == 6 &&( m_dataPacketSent == 10 || m_dataPacketSent == 11  ))
         {
           ipTclassTag.SetTclass (0x3);
         }
       else
         {
-          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && !isRetransmission)
+          if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
             {
               ipTclassTag.SetTclass (0x2);
             }

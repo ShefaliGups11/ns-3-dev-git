@@ -504,7 +504,7 @@ main (int argc, char *argv[])
   QueueDisc::Stats st = queueDiscs.Get (0)->GetStats ();
 
   if (st.GetNDroppedPackets (RedQueueDisc::UNFORCED_DROP) == 0 &&
-      st.GetNDroppedPackets (RedQueueDisc::UNFORCED_MARK) == 0)
+      st.GetNMarkedPackets (RedQueueDisc::UNFORCED_MARK) == 0)
     {
       std::cout << "There should be some unforced drops or marks" << std::endl;
       exit (1);

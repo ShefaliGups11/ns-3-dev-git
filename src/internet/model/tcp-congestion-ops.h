@@ -155,16 +155,6 @@ public:
     NS_UNUSED (event);
   }
 
-  /**
-   * \brief Reduces congestion window on receipt of ECN Echo Flag
-   *
-   * \param tcb internal congestion state
-   */
-  virtual void ReduceCwnd (Ptr<TcpSocketState> tcb)
-  {
-    NS_UNUSED (tcb);
-  }
-
   // Present in Linux but not in ns-3 yet:
   /* call when ack arrives (optional) */
   // void (*in_ack_event)(struct sock *sk, u32 flags);
@@ -212,7 +202,6 @@ public:
   virtual void IncreaseWindow (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
   virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb,
                                 uint32_t bytesInFlight);
-  virtual void ReduceCwnd(Ptr<TcpSocketState> tcb);
   virtual Ptr<TcpCongestionOps> Fork ();
 
 protected:

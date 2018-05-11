@@ -2751,7 +2751,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
       if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x2) == 0)
         {
           // Set ECT(0) if ECN is enabled with the last received ipTos
-          ipTosTag.SetTos (GetIpTos () | 0x2);
+          ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
         }
       else
         {
@@ -2766,7 +2766,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
         {
           // Set ECT(0) if ECN is enabled and ipTos is 0
           SocketIpTosTag ipTosTag;
-          ipTosTag.SetTos (0x2);
+          ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
           p->AddPacketTag (ipTosTag);
         }
     }
@@ -2777,7 +2777,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
       if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x2) == 0)
         {
           // Set ECT(0) if ECN is enabled with the last received ipTos
-          ipTclassTag.SetTclass (GetIpv6Tclass () | 0x2);
+          ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
         }
       else
         {
@@ -2792,7 +2792,7 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
         {
           // Set ECT(0) if ECN is enabled and ipTos is 0
           SocketIpv6TclassTag ipTclassTag;
-          ipTclassTag.SetTclass (0x2);
+          ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
           p->AddPacketTag (ipTclassTag);
         }
     }

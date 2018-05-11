@@ -203,17 +203,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
       SocketIpTosTag ipTosTag;
       if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
-          ipTosTag.SetTos (GetIpTos () | 0x3);
+          ipTosTag.SetTos (MarkEcnCe (GetIpTos ()));
         }
       else if ( m_testcase == 6 &&  ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
-          ipTosTag.SetTos (GetIpTos () | 0x3);
+          ipTosTag.SetTos (MarkEcnCe (GetIpTos ()));
         }
       else
         {
           if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0)
             {
-              ipTosTag.SetTos (GetIpTos () | 0x2);
+              ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
             }
           else
             {
@@ -227,17 +227,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
       SocketIpTosTag ipTosTag;
       if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
-          ipTosTag.SetTos (0x3);
+          ipTosTag.SetTos (MarkEcnCe (GetIpTos ()));
         }
       else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
-          ipTosTag.SetTos (0x3);
+          ipTosTag.SetTos (MarkEcnCe (GetIpTos ()));
         }
       else
         {
           if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
             {
-              ipTosTag.SetTos (0x2);
+              ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
             }
         }
       p->AddPacketTag (ipTosTag);
@@ -248,17 +248,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
       SocketIpv6TclassTag ipTclassTag;
       if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
-          ipTclassTag.SetTclass (GetIpv6Tclass () | 0x3);
+          ipTclassTag.SetTclass (MarkEcnCe (GetIpv6Tclass ()));
         }
       else if ( m_testcase == 6 && ( m_dataPacketSent == 10 || m_dataPacketSent == 11))
         {
-          ipTclassTag.SetTclass (GetIpv6Tclass () | 0x3);
+          ipTclassTag.SetTclass (MarkEcnCe (GetIpv6Tclass ()));
         }
       else
         {
           if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0)
             {
-              ipTclassTag.SetTclass (GetIpv6Tclass () | 0x2);
+              ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
             }
           else
             {
@@ -272,17 +272,17 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
       SocketIpv6TclassTag ipTclassTag;
       if ( m_testcase == 5 && (m_dataPacketSent == 1  || m_dataPacketSent == 2 || m_dataPacketSent == 3 || m_dataPacketSent == 4))
         {
-          ipTclassTag.SetTclass (0x3);
+          ipTclassTag.SetTclass (MarkEcnCe (GetIpv6Tclass ()));
         }
       else if ( m_testcase == 6 &&( m_dataPacketSent == 10 || m_dataPacketSent == 11  ))
         {
-          ipTclassTag.SetTclass (0x3);
+          ipTclassTag.SetTclass (MarkEcnCe (GetIpv6Tclass ()));
         }
       else
         {
           if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
             {
-              ipTclassTag.SetTclass (0x2);
+              ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
             }
         }
       p->AddPacketTag (ipTclassTag);

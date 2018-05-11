@@ -439,6 +439,46 @@ public:
   void SetRecoveryAlgorithm (Ptr<TcpRecoveryOps> recovery);
 
   /**
+   * \brief Mark ECT(0)
+   *
+   * \return TOS with ECT(0)
+   */
+  inline uint8_t MarkEcnEct0 (uint8_t tos) const
+    {
+      return tos | 0x2;
+    }
+
+  /**
+   * \brief Mark ECT(1)
+   *
+   * \return TOS with ECT(1)
+   */
+  inline uint8_t MarkEcnEct1 (uint8_t tos) const
+    {
+      return tos | 0x1;
+    }
+
+  /**
+   * \brief Mark CE
+   *
+   * \return TOS with CE
+   */
+  inline uint8_t MarkEcnCe (uint8_t tos) const
+    {
+      return tos | 0x3;
+    }
+
+  /**
+   * \brief Clears ECN bits from TOS
+   *
+   * \return TOS without ECN bits
+   */
+  inline uint8_t ClearEcnBits (uint8_t tos) const
+    {
+      return tos & 0xfc;
+    }
+
+  /**
    * \brief Sets the variable m_useEcn true to use ECN functionality
    */
   void SetEcn ();

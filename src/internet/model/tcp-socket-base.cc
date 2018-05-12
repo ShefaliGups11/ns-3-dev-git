@@ -2755,10 +2755,17 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
   if (GetIpTos ())
     {
       SocketIpTosTag ipTosTag;
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x2) == 0)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpTos () & 0x3) == 0)
         {
-          // Set ECT(0) if ECN is enabled with the last received ipTos
-          ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
+          // Classic traffic have ECT(0) flags whereas L4S have ECT(1) flags set with the last received ipTos
+          if (m_congestionControl->GetName () == "TcpDctcp")
+            {
+              ipTosTag.SetTos (MarkEcnEct1 (GetIpTos ()));
+            }
+          else
+            {
+              ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
+            }
         }
       else
         {
@@ -2771,9 +2778,22 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
     {
       if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
         {
-          // Set ECT(0) if ECN is enabled and ipTos is 0
+          // Classic traffic have ECT0 flags whereas L4S have ECT1 flags set
           SocketIpTosTag ipTosTag;
-          ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
+          if (m_congestionControl->GetName () == "TcpDctcp")
+            {
+              ipTosTag.SetTos (MarkEcnEct1 (GetIpTos ()));
+            }
+          else
+            {
+              ipTosTag.SetTos (MarkEcnEct0 (GetIpTos ()));
+            }
+          p->AddPacketTag (ipTosTag);
+        }
+      else if (m_congestionControl->GetName () == "TcpDctcp")
+        {
+          SocketIpTosTag ipTosTag;
+          ipTosTag.SetTos (MarkEcnEct1 (GetIpTos ()));
           p->AddPacketTag (ipTosTag);
         }
     }
@@ -2781,10 +2801,17 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
   if (IsManualIpv6Tclass ())
     {
       SocketIpv6TclassTag ipTclassTag;
-      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x2) == 0)
+      if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED && (GetIpv6Tclass () & 0x3) == 0)
         {
-          // Set ECT(0) if ECN is enabled with the last received ipTos
-          ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
+          //Classic traffic have ECT0 flags whereas L4S have ECT1 flags set
+          if (m_congestionControl->GetName () == "TcpDctcp")
+            {
+              ipTclassTag.SetTclass (MarkEcnEct1 (GetIpv6Tclass ()));
+            }
+          else
+            {
+              ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
+            }
         }
       else
         {
@@ -2797,7 +2824,20 @@ TcpSocketBase::AddSocketTags (const Ptr<Packet> &p) const
     {
       if (m_tcb->m_ecnState != TcpSocketState::ECN_DISABLED)
         {
-          // Set ECT(0) if ECN is enabled and ipTos is 0
+          SocketIpv6TclassTag ipTclassTag;
+          // Classic traffic have ECT0 flags whereas L4S have ECT1 flags set
+          if (m_congestionControl->GetName () == "TcpDctcp")
+            {
+              ipTclassTag.SetTclass (MarkEcnEct1 (GetIpv6Tclass ()));
+            }
+          else
+            {
+              ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
+            }
+          p->AddPacketTag (ipTclassTag);
+        }
+      else if (m_congestionControl->GetName () == "TcpDctcp")
+        {
           SocketIpv6TclassTag ipTclassTag;
           ipTclassTag.SetTclass (MarkEcnEct0 (GetIpv6Tclass ()));
           p->AddPacketTag (ipTclassTag);

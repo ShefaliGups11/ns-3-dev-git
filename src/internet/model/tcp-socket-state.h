@@ -21,6 +21,7 @@
 #include "ns3/data-rate.h"
 #include "ns3/traced-value.h"
 #include "ns3/sequence-number.h"
+#include "tcp-rx-buffer.h"
 
 namespace ns3 {
 
@@ -174,6 +175,8 @@ public:
   TracedValue<uint32_t>  m_bytesInFlight {0};        //!< Bytes in flight
   TracedValue<Time>      m_lastRtt {Seconds (0.0)};  //!< Last RTT sample collected
 
+  Ptr<TcpRxBuffer>       m_rxBuffer;                 //!< Rx buffer (reordering buffer)
+
   /**
    * \brief Get cwnd in segments rather than bytes
    *
@@ -193,6 +196,8 @@ public:
   {
     return m_ssThresh / m_segmentSize;
   }
+
+  Callback <void, uint8_t> m_sendEmptyPacketCallback;
 };
 
 } //namespace ns3

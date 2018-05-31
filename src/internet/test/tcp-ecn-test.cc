@@ -327,7 +327,7 @@ TcpSocketCongestedRouter::SendDataPacket (SequenceNumber32 seq, uint32_t maxSize
   TcpHeader header;
   header.SetFlags (flags);
   header.SetSequenceNumber (seq);
-  header.SetAckNumber (m_rxBuffer->NextRxSequence ());
+  header.SetAckNumber (m_tcb->m_rxBuffer->NextRxSequence ());
   if (m_endPoint)
     {
       header.SetSourcePort (m_endPoint->GetLocalPort ());

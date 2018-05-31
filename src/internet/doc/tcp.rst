@@ -778,16 +778,15 @@ The following ECN states are declared in ``src/internet/model/tcp-socket.h``
     {
       ECN_DISABLED = 0, //!< ECN disabled traffic
       ECN_IDLE,         //!< ECN is enabled but currently there is no action pertaining to ECE or CWR to be taken
-      ECN_CE_RCVD,      //!< This state indicates that the receiver has received a packet with CE bit set in IP header
-      ECN_ECE_SENT,     //!< This state indicates that the receiver has sent an ACK with ECE bit set in TCP header
-      ECN_ECE_RCVD,     //!< This state indicates that the sender has received an ACK with ECE bit set in TCP header
-      ECN_CWR_SENT      //!< This state indicates that the sender has reduced the congestion window, and sent a packet
-                             with CWR bit set in TCP header
+      ECN_CE_RCVD,      //!< Last packet received had CE bit set in IP header
+      ECN_SENDING_ECE,  //!< Receiver sends an ACK with ECE bit set in TCP header
+      ECN_ECE_RCVD,     //!< Last ACK received had ECE bit set in TCP header
+      ECN_CWR_SENT      //!< Sender has reduced the congestion window, and sent a packet with CWR bit set in TCP header. This is used for tracing.
     } EcnStates_t;
 
 The following are some important ECN parameters
   // ECN parameters
-  bool                     m_ecn;             //!< Socket ECN capability
+  bool                     m_useEcn;          //!< Socket ECN capability
   TracedValue<EcnStates_t> m_ecnState;        //!< Current ECN State, represented as combination of EcnState values
   TracedValue<SequenceNumber32> m_ecnEchoSeq; //< Sequence number of the last received   ECN Echo
 
@@ -806,7 +805,7 @@ ECN capability is negotiated during the three-way TCP handshake:
 
 ::
 
-    if (m_ecn)
+    if (m_useEcn)
       {
         SendEmptyPacket (TcpHeader::SYN | TcpHeader::ECE | TcpHeader::CWR);
       }
@@ -820,7 +819,7 @@ ECN capability is negotiated during the three-way TCP handshake:
 
 ::
 
-    if (m_ecn && (tcpHeader.GetFlags () & (TcpHeader::CWR | TcpHeader::ECE)) == (TcpHeader::CWR | TcpHeader::ECE))
+    if (m_useEcn && (tcpHeader.GetFlags () & (TcpHeader::CWR | TcpHeader::ECE)) == (TcpHeader::CWR | TcpHeader::ECE))
       {
         SendEmptyPacket (TcpHeader::SYN | TcpHeader::ACK |TcpHeader::ECE);
         m_ecnState = ECN_IDLE;
@@ -835,7 +834,7 @@ ECN capability is negotiated during the three-way TCP handshake:
 
 ::
 
-    if (m_ecn &&  (tcpHeader.GetFlags () & (TcpHeader::CWR | TcpHeader::ECE)) == (TcpHeader::ECE))
+    if (m_useEcn &&  (tcpHeader.GetFlags () & (TcpHeader::CWR | TcpHeader::ECE)) == (TcpHeader::ECE))
       {
         m_ecnState = ECN_IDLE;
       }
@@ -859,7 +858,7 @@ ECN State Transitions
 3. Upon receipt of a packet with CE bits set in IP header, the
    receiver changes its state to ECN_CE_RCVD
 4. When the receiver sends an ACK with ECE bit set, its state is set as
-   ECN_ECE_SENT
+   ECN_SENDING_ECE
 5. When the sender receives an ACK with ECE bit set from receiver, its state
    is set as ECN_ECE_RCVD
 6. When the sender sends the packet with CWR bit set, its state is set as
@@ -874,8 +873,7 @@ Based on the suggestions provided in RFC 3168, the following behavior has
 been implemented:
 
 1. Pure ACK packets should not have the ECT bit set (Section 6.1.4).
-2. Retransmitted packets should not have the ECT bit set in order to prevent DoS
-   attack (Section 6.1.5).
+2. In the current implementation, the sender only sends ECT(0) in the IP header.
 3. The sender should should reduce the congestion window only once in each
    window (Section 6.1.2).
 4. The receiver should ignore the CE bits set in a packet arriving out of

@@ -439,7 +439,7 @@ public:
   void SetRecoveryAlgorithm (Ptr<TcpRecoveryOps> recovery);
 
   /**
-   * \brief Sets the variable m_ecn true to use ECN functionality
+   * \brief Sets the variable m_useEcn true to use ECN functionality
    */
   void SetEcn ();
 
@@ -1165,7 +1165,7 @@ protected:
   Timer m_pacingTimer {Timer::REMOVE_ON_DESTROY}; //!< Pacing Event
 
   // Parameters related to Explicit Congestion Notification
-  bool                          m_ecn        {false};  //!< Socket ECN capability
+  bool                          m_useEcn     {false};  //!< Socket ECN capability
   TracedValue<SequenceNumber32> m_ecnEchoSeq {0};      //!< Sequence number of the last received ECN Echo
   TracedValue<SequenceNumber32> m_ecnCESeq   {0};      //!< Sequence number of the last received Congestion Experienced
   TracedValue<SequenceNumber32> m_ecnCWRSeq  {0};      //!< Sequence number of the last sent CWR

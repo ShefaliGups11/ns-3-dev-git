@@ -106,11 +106,11 @@ public:
   {
     ECN_DISABLED = 0, /**< ECN disabled traffic                                                                          */
     ECN_IDLE,         /**< ECN is enabled  but currently there is no action pertaining to ECE or CWR to be taken         */
-    ECN_CE_RCVD,      /**< This state indicates that the receiver has received a packet with CE bit set in IP header     */
-    ECN_ECE_SENT,     /**< This state indicates that the receiver has sent an ACK with ECE bit set in TCP header         */
-    ECN_ECE_RCVD,     /**< This state indicates that the sender has received an ACK with ECE bit set in TCP header       */
-    ECN_CWR_SENT      /**< This state indicates that the sender has reduced the congestion window, and sent a packet
-                        * with CWR bit set in TCP header                                                                 */
+    ECN_CE_RCVD,      /**< Last packet received had CE bit set in IP header                                              */
+    ECN_SENDING_ECE,  /**< Receiver sends an ACK with ECE bit set in TCP header                                          */
+    ECN_ECE_RCVD,     /**< Last ACK received had ECE bit set in TCP header                                               */
+    ECN_CWR_SENT      /**< Sender has reduced the congestion window, and sent a packet with CWR bit set in TCP header.
+                        *  This state is used for tracing.                                                               */
   } EcnState_t;
 
   /**

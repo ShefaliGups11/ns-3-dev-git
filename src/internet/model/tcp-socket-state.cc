@@ -108,7 +108,7 @@ TcpSocketState::TcpCongStateName[TcpSocketState::CA_LAST_STATE] =
 const char* const
 TcpSocketState::EcnStateName[TcpSocketState::ECN_CWR_SENT + 1] =
 {
-  "ECN_DISABLED", "ECN_IDLE", "ECN_CE_RCVD", "ECN_ECE_SENT", "ECN_ECE_RCVD", "ECN_CWR_SENT"
+  "ECN_DISABLED", "ECN_IDLE", "ECN_CE_RCVD", "ECN_SENDING_ECE", "ECN_ECE_RCVD", "ECN_CWR_SENT"
 };
 
 } //namespace ns3

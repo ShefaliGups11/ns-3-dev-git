@@ -21,7 +21,6 @@
 
 #include "tcp-ledbat.h"
 #include "ns3/log.h"
-#include "ns3/simulator.h"
 
 namespace ns3 {
 
@@ -83,17 +82,9 @@ TcpLedbat::TcpLedbat (void)
   : TcpNewReno ()
 {
   NS_LOG_FUNCTION (this);
-  m_target = MilliSeconds (100);
-  m_gain = 1;
-  m_doSs = DO_SLOWSTART;
-  m_baseHistoLen = 10;
-  m_noiseFilterLen = 4;
   InitCircBuf (m_baseHistory);
   InitCircBuf (m_noiseFilter);
-  m_lastRollover = 0;
-  m_sndCwndCnt = 0;
-  m_flag = LEDBAT_CAN_SS;
-}
+};
 
 void TcpLedbat::InitCircBuf (struct OwdCircBuf &buffer)
 {
@@ -103,19 +94,19 @@ void TcpLedbat::InitCircBuf (struct OwdCircBuf &buffer)
 }
 
 TcpLedbat::TcpLedbat (const TcpLedbat& sock)
-  : TcpNewReno (sock)
+  : TcpNewReno (sock),
+    m_target (sock.m_target),
+    m_gain (sock.m_gain),
+    m_doSs (sock.m_doSs),
+    m_baseHistoLen (sock.m_baseHistoLen),
+    m_noiseFilterLen (sock.m_noiseFilterLen),
+    m_lastRollover (sock.m_lastRollover),
+    m_sndCwndCnt (sock.m_sndCwndCnt),
+    m_baseHistory (sock.m_baseHistory),
+    m_noiseFilter (sock.m_noiseFilter),
+    m_flag (sock.m_flag)
 {
   NS_LOG_FUNCTION (this);
-  m_target = sock.m_target;
-  m_gain = sock.m_gain;
-  m_doSs = sock.m_doSs;
-  m_baseHistoLen = sock.m_baseHistoLen;
-  m_noiseFilterLen = sock.m_noiseFilterLen;
-  m_baseHistory = sock.m_baseHistory;
-  m_noiseFilter = sock.m_noiseFilter;
-  m_lastRollover = sock.m_lastRollover;
-  m_sndCwndCnt = sock.m_sndCwndCnt;
-  m_flag = sock.m_flag;
 }
 
 TcpLedbat::~TcpLedbat (void)

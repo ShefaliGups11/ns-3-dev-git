@@ -192,7 +192,7 @@ private:
   OwdCircBuf    m_baseHistory;                          //!< Buffer to store the base delay
   OwdCircBuf    m_noiseFilter;                          //!< Buffer to store the current delay
   uint32_t      m_flag           {LEDBAT_CAN_SS};       //!< LEDBAT Flag
-  
+  uint32_t      m_minCwnd        {2};                   //!< Minimum cWnd value mentioned in RFC 6817
 };
 
 } // namespace ns3

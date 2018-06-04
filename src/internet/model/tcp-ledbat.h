@@ -182,16 +182,16 @@ private:
    */
   void UpdateBaseDelay (uint32_t owd);
 
-  Time m_target;                     //!< Target Queue Delay
-  double m_gain;                     //!< GAIN value from RFC
-  SlowStartType m_doSs;              //!< Permissible Slow Start State
-  uint32_t m_baseHistoLen;           //!< Length of base delay history buffer
-  uint32_t m_noiseFilterLen;         //!< Length of current delay buffer
-  uint64_t m_lastRollover;           //!< Timestamp of last added delay
-  int32_t m_sndCwndCnt;              //!< The congestion window addition parameter
-  OwdCircBuf m_baseHistory;   //!< Buffer to store the base delay
-  OwdCircBuf m_noiseFilter;   //!< Buffer to store the current delay
-  uint32_t m_flag;                   //!< LEDBAT Flag
+  Time          m_target         {MilliSeconds (100)};  //!< Target Queue Delay
+  double        m_gain           {1};                   //!< GAIN value from RFC
+  SlowStartType m_doSs           {DO_SLOWSTART};        //!< Permissible Slow Start State
+  uint32_t      m_baseHistoLen   {10};                  //!< Length of base delay history buffer
+  uint32_t      m_noiseFilterLen {4};                   //!< Length of current delay buffer
+  uint64_t      m_lastRollover   {0};                   //!< Timestamp of last added delay
+  int32_t       m_sndCwndCnt     {0};                   //!< The congestion window addition parameter
+  OwdCircBuf    m_baseHistory;                          //!< Buffer to store the base delay
+  OwdCircBuf    m_noiseFilter;                          //!< Buffer to store the current delay
+  uint32_t      m_flag           {LEDBAT_CAN_SS};       //!< LEDBAT Flag
 };
 
 } // namespace ns3
